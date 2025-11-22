@@ -8,7 +8,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-titanic_data = pd.read_csv('/home/harshvardhan/AI-ML/titanic.csv')
+titanic_data = pd.read_csv('/home/harshvardhan/AI-ML/Supervised/datasets/titanic.csv')
 titanic_data = titanic_data.dropna(subset=['Survived'])
 
 X = titanic_data[['Pclass','Sex','Age','SibSp','Parch','Fare']]
