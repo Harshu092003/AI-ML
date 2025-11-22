@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score,classification_report
+import matplotlib.pyplot as plt
+
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -35,3 +37,14 @@ prediction = rf_classifier.predict(sample)
 sample_dict = sample.iloc[0].to_dict()
 print(f"\nsample passenger : {sample_dict}")
 print(f"Predicted Survival : { 'Survived' if prediction[0] == 1 else 'Did not survive'}")
+
+
+plt.figure(figsize=(8, 5))
+plt.bar(X.columns, rf_classifier.feature_importances_ ,color = 'pink')  # No colors specified
+plt.xlabel("Features")
+plt.ylabel("Importance")
+plt.title("Random Forest Feature Importance")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig("random_forest_feature_importance.png")
+
