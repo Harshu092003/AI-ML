@@ -1,18 +1,18 @@
-[project]
+[tool.poetry]
 name = "ai-ml"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Harshvardhan pujari",email = "harshvardhan_pujari@mail.mumbai-tech.com"}
-]
+authors = ["Harshvardhan Pujari <harshvardhan_pujari@mail.mumbai-tech.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "scikit-learn (>=1.7.2,<2.0.0)",
-    "matplotlib (>=3.10.7,<4.0.0)",
-    "pandas (>=2.3.3,<3.0.0)"
-]
+package-mode = false
 
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.15"
+scikit-learn = ">=1.7.2,<2.0.0"
+matplotlib = ">=3.10.7,<4.0.0"
+pandas = ">=2.3.3,<3.0.0"
+torch = "^2.9.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
