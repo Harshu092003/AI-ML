@@ -23,22 +23,22 @@ loss_fn = nn.MSELoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
 # Training loop
-for epoch in range(200):
+for epoch in range(2000):
     y_pred = model(X)
     loss = loss_fn(y_pred, Y)
 
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+    optimizer.zero_grad() # Reset gradients
+    loss.backward() # Backpropagation and compute gradients
+    optimizer.step() # Update parameters
 
-    if epoch % 20 == 0:
+    if epoch % 200 == 0:
         print(f"Epoch {epoch}, Loss = {loss.item():.6f}")
 
 # Test
 test = torch.tensor([[10.0]])
 prediction = model(test)
 
-print("\nPrediction for x=10:", prediction)
+print("\nPrediction for x=10:", prediction.item())
 print("Expected:", 20)
 
 # Show learned parameters
