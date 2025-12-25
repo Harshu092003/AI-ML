@@ -7,12 +7,12 @@ from sklearn.cluster import KMeans
 # -----------------------------
 # Student scores: [Math, Science]
 X = np.array([
-    [40, 45],
-    [42, 43],
-    [38, 40],
-    [90, 92],
-    [88, 85],
-    [92, 90]
+    [40, 45], # Student 1
+    [42, 43], # Student 2
+    [38, 40], # Student 3
+    [90, 92], # Student 4
+    [88, 85], # Student 5
+    [92, 90]  # Student 6
 ])
 
 # -----------------------------
