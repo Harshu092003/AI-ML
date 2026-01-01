@@ -1,3 +1,5 @@
+# Association Rule learning algorithm
+
 import pandas as pd
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori
@@ -16,8 +18,7 @@ te = TransactionEncoder()
 te_array = te.fit(dataset).transform(dataset)
 print(te_array)
 df = pd.DataFrame(te_array, columns=te.columns_)
-
-
+print(df)
 
 frequent_itemsets = apriori(df, min_support=0.4, use_colnames=True)
 print(frequent_itemsets)
