@@ -1,4 +1,4 @@
-# Custering algorithm
+# Clustering algorithm
 
 import numpy as np
 import matplotlib.pyplot as plt
