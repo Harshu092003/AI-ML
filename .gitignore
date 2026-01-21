@@ -1,0 +1,21 @@
+# Environments
+ai-ml-py3.12/
+venv/
+.env/
+
+# Python
+__pycache__/
+*.pyc
+
+# Data
+*.txt
+*.csv
+
+# Models
+*.pt
+*.pth
+
+# Jupyter
+.ipynb_checkpoints/
+
+poetry.lock
