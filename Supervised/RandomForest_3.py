@@ -1,3 +1,10 @@
+# Random Forest:
+# Random Forest is an ensemble machine learning algorithm that builds multiple
+# decision trees using random subsets of data and features, and combines their
+# predictions (by voting or averaging) to improve accuracy, reduce overfitting,
+# and increase robustness compared to a single decision tree.
+
+
 import pandas as pd 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
