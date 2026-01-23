@@ -1,3 +1,10 @@
+#  Sigmoid Activation Function :
+# An activation function that converts any value into a number between 0 and 1, often used to represent probability.
+
+# Adam (Adaptive Moment Estimation) : 
+
+# An optimizer that automatically adjusts learning rates using past gradients, making training faster and more stable.
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
