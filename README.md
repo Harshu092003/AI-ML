@@ -10,3 +10,4 @@ AI-ML repo will consist all materials ,which will be required to learn Artificia
 - LLM(large language model)
 - NLP(Natural language processing)
 - GenAI
+- Vector database , langchain , llamaindex

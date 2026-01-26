@@ -17,5 +17,5 @@ __pycache__/
 
 # Jupyter
 .ipynb_checkpoints/
-
+chroma_db
 poetry.lock
