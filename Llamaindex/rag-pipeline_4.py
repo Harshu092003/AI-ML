@@ -24,7 +24,7 @@ Settings.embed_model = HuggingFaceEmbedding(
 
 Settings.llm = Ollama(model="llama3")        
 
-documents = SimpleDirectoryReader("./data").load_data()  
+documents = SimpleDirectoryReader("./pdf").load_data()  
 
 db = chromadb.PersistentClient(path="./chroma_db")       # Persistent Chroma database
 chroma_collection = db.get_or_create_collection(name="quickstart")  # Vector collection
