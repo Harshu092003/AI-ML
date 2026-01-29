@@ -49,7 +49,7 @@ memory = ChatMemoryBuffer.from_defaults(     # Store chat history
 chat_engine = index.as_chat_engine(           # Create chat-based RAG engine
     chat_mode="context",                    
     memory=memory,                            # Enable conversation memory
-    similarity_top_k=5,                       # Retrieve top 5 relevant chunks
+    similarity_top_k=10,                       # Retrieve top 5 relevant chunks
 )
 
 while True:                                  
