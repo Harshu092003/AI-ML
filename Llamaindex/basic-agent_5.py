@@ -3,14 +3,10 @@ from llama_index.llms.ollama import Ollama
 import chromadb
 
 from llama_index.core import (
-    VectorStoreIndex,
-    SimpleDirectoryReader,
-    StorageContext,
     Settings,
 )
 from llama_index.core.agent import ReActAgent
 from llama_index.core.tools import FunctionTool
-from llama_index.vector_stores.chroma import ChromaVectorStore
 
 load_dotenv()
 Settings.llm = Ollama(model="llama3")
@@ -54,7 +50,7 @@ divide_tool = FunctionTool.from_defaults(
     description="Divide two numbers.",
 )
 
-agents = ReActAgent(
+agents = ReActAgent(  # Reasoning and Acting agent
     name="Calculator Agent",
     tools=[add_tool, subtract_tool, multiply_tool, divide_tool],
     llm=Settings.llm,
