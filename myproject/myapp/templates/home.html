@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  </head>
+  <body>
+    <h2>Django + FastAPI + HTMX</h2>
+
+    <!-- ================= GET EXAMPLE ================= -->
+    <h3>GET Example</h3>
+
+    <input
+      type="text"
+      name="name"
+      placeholder="Type your name"
+      hx-get="http://127.0.0.1:8001/htmx-get/"
+      hx-trigger="keyup changed delay:500ms"
+      hx-target="#get-result"
+    />
+
+    <div id="get-result"></div>
+
+    <hr />
+
+    <!-- ================= POST EXAMPLE ================= -->
+    <h3>POST Example</h3>
+
+    <form
+      hx-post="http://127.0.0.1:8001/htmx-post/"
+      hx-target="#post-result"
+      hx-swap="innerHTML"
+    >
+      <input type="text" name="name" placeholder="Your name" required />
+      <br /><br />
+      <input type="text" name="message" placeholder="Message" required />
+      <br /><br />
+      <button type="submit">Send</button>
+    </form>
+
+    <div id="post-result"></div>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <title>HTMX POST</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  </head>
+  <body>
+    <h2>HTMX POST Example</h2>
+
+    <form hx-post="/htmx-post-submit/" hx-target="#result">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="Enter name" />
+      <button type="submit">Send POST</button>
+    </form>
+
+    <div id="result"></div>
+  </body>
+</html>
