@@ -25,3 +25,7 @@ file
 data 
 .env 
 storage
+
+postman
+
+.postman

@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
-from rag_engine import initialize_rag, ask_question
+from langchain_rag_pipeline import initialize_rag, ask_question
 
 app = FastAPI(title="Simple RAG API")
 

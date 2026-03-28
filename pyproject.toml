@@ -41,6 +41,8 @@ faiss-cpu = "^1.13.2"
 llama-index-vector-stores-faiss = "^0.5.2"
 django = "^6.0.2"
 python-multipart = "^0.0.22"
+langchain-community = "^0.4.1"
+langchain-core = "^1.2.23"
 
 
 [build-system]
