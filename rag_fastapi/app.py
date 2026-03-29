@@ -1,3 +1,4 @@
+# change directory to cd rag_fastapi
 # To run : uvicorn app:app --reload
 
 from fastapi import FastAPI

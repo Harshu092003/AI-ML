@@ -20,7 +20,6 @@ __pycache__/
 chroma_db
 poetry.lock
 
-pdf
 file
 data 
 .env 
@@ -29,3 +28,6 @@ storage
 postman
 
 .postman
+chromadb
+__pycache__/
+*.pyc
