@@ -22,11 +22,20 @@ class QueryRequest(BaseModel):
     question: str
 
 
+class Source(BaseModel):
+    file: str
+    pages: list[int]
+
+
 class QueryResponse(BaseModel):
     answer: str
+    sources: list[Source]
 
 
 @app.post("/query", response_model=QueryResponse)
 def query_rag(request: QueryRequest):
-    answer = ask_question(request.question)
-    return {"answer": answer}
+    response = ask_question(request.question)
+    return {
+        "answer": response["answer"],
+        "sources": response["sources"]
+    }
