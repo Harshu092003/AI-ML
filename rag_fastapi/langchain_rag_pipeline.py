@@ -185,3 +185,35 @@ def ask_question(question: str):
             }
         ]
     }
+    
+    
+
+# 🔹 Techniques Used in This RAG Pipeline
+# 1. Retrieval-Augmented Generation (RAG)
+# 2. Dense Vector Search (Embedding-based retrieval using E5 model)
+# 3. Semantic Search (via HuggingFace embeddings)
+# 4. Vector Database (ChromaDB for storage & retrieval)
+
+# 5. Custom Document Structuring (Patient-wise splitting instead of page-wise)
+# 6. Metadata Mapping (Tracking source file + page number)
+# 7. Deduplication (Using set() for unique page numbers)
+
+# 8. Top-K Retrieval (k=3 optimization)
+# re-ranking with simple word-overlap scoring to find best source page for answer
+# 9. Context Window Optimization (Reducing unnecessary documents)
+
+# 10. Relevance Scoring (Word-overlap based scoring)
+# 11. Basic Re-ranking (Selecting best document using score)
+
+# 12. Source Attribution (Returning file name + exact page)
+# 13. Query Formatting (E5 model prefix: "query:")
+
+# 14. Stuff Document Chain (Combining retrieved docs into single context)
+# 15. Similarity Search (instead of MMR)
+
+# 16. Exact Matching Optimization (patient_map for direct lookup - optional fast path)
+
+# 17. Prompt Engineering (Strict instruction: "Use only given context")
+
+# 18. Lightweight Context Filtering (Choosing best doc for final answer source)
+# source citation with page number (not just file) for better traceability
