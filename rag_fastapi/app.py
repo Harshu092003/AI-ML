@@ -2,7 +2,7 @@
 # uvicorn app:app --reload
 
 # for testing the streaming endpoint, you can use curl:
-# curl --no-buffer "http://localhost:8000/stream?question=Patient%20200"
+# curl --no-buffer "http://localhost:8000/stream?question=Patient%20200"  %20 is used for spacing in the URL
 
 
 
@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from fastapi.responses import StreamingResponse
-from langchain_rag_pipeline import initialize_rag, ask_question, stream_question
+from langchain_rag_pipeline import initialize_rag, stream_question
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,22 +25,6 @@ app = FastAPI(title="Simple RAG API", lifespan=lifespan)
 class QueryRequest(BaseModel):
     question: str
 
-class Source(BaseModel):
-    file: str
-    pages: list[int]
-
-class QueryResponse(BaseModel):
-    answer: str
-    sources: list[Source]
-
-@app.post("/query", response_model=QueryResponse)
-def query_rag(request: QueryRequest):
-    response = ask_question(request.question)
-    return {
-        "answer": response["answer"],
-        "sources": response["sources"]
-    }
-
 async def stream_answer(question: str):
     for chunk in stream_question(question):
         yield chunk
@@ -51,9 +35,5 @@ async def stream_rag(question: str):
     return StreamingResponse(
         stream_answer(question),
         media_type="text/plain",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-            "Transfer-Encoding": "chunked",
-        }
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     )

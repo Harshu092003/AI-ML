@@ -1,198 +1,87 @@
 import os
+import requests
+import json
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.chat_models import ChatOllama
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
-from langchain_classic.chains import create_retrieval_chain
 from langchain_core.documents import Document
 
-rag_chain = None
-patient_map = {}
-
 retriever_global = None
-llm_global = None
-
 
 def initialize_rag():
-    global rag_chain, patient_map, retriever_global, llm_global
+    global retriever_global
 
     persist_directory = "./chromadb"
-
-    embeddings = HuggingFaceEmbeddings(
-        model_name="intfloat/e5-base-v2"
-    )
-
-    llm = ChatOllama(
-        model="llama3",
-        temperature=0,
-        streaming=True,
-        num_predict=512,
-        repeat_penalty=1.1,
-    )
-
-    llm_global = llm
+    embeddings = HuggingFaceEmbeddings(model_name="intfloat/e5-base-v2")
 
     if os.path.exists(persist_directory):
         print("Loading existing vector database")
-
-        vectordb = Chroma(
-            persist_directory=persist_directory,
-            embedding_function=embeddings
-        )
+        vectordb = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
 
     else:
         print("Creating new vector database")
-
         documents = PyPDFDirectoryLoader("pdf/").load()
-
         raw_text = "\n".join([doc.page_content for doc in documents])
 
-        patients = raw_text.split("Patient Name:")
-
-        clean_docs = []
-        for p in patients:
-            p = p.strip()
-            if p:
-                clean_docs.append("Patient Name: " + p)
-
+        # Build patient-wise metadata map
         patient_metadata_map = {}
-
         for doc in documents:
-            text = doc.page_content
-            source_file = doc.metadata.get("source", "unknown")
-            page_no = int(doc.metadata.get("page", 0))
-
-            parts = text.split("Patient Name:")
-            for part in parts:
+            source = doc.metadata.get("source", "unknown")
+            page = int(doc.metadata.get("page", 0))
+            for part in doc.page_content.split("Patient Name:"):
                 part = part.strip()
                 if not part:
                     continue
-
-                full_record = "Patient Name: " + part
-                key = full_record.split("\n")[0].strip()
-
+                key = "Patient Name: " + part.split("\n")[0].strip()
                 if key not in patient_metadata_map:
-                    patient_metadata_map[key] = {
-                        "pages": set(),
-                        "source": source_file
-                    }
+                    patient_metadata_map[key] = {"pages": set(), "source": source}
+                patient_metadata_map[key]["pages"].add(page)
 
-                patient_metadata_map[key]["pages"].add(page_no)
-
+        # Build docs
         docs = []
-        for p in clean_docs:
-            key = p.split("\n")[0].strip()
-            metadata = patient_metadata_map.get(key, {})
+        for p in raw_text.split("Patient Name:"):
+            p = p.strip()
+            if not p:
+                continue
+            full = "Patient Name: " + p
+            key = full.split("\n")[0].strip()
+            meta = patient_metadata_map.get(key, {})
+            pages = list(meta.get("pages", []))
+            docs.append(Document(
+                page_content=full,
+                metadata={"source": meta.get("source", "unknown"), "page": pages[0] if pages else 0}
+            ))
 
-            pages = list(metadata.get("pages", []))
-            page_to_store = pages[0] if pages else 0
-
-            docs.append(
-                Document(
-                    page_content=p,
-                    metadata={
-                        "source": metadata.get("source", "unknown"),
-                        "page": page_to_store
-                    }
-                )
-            )
-
-        vectordb = Chroma.from_documents(
-            documents=docs,
-            embedding=embeddings,
-            persist_directory=persist_directory
-        )
-
+        vectordb = Chroma.from_documents(documents=docs, embedding=embeddings, persist_directory=persist_directory)
         vectordb.persist()
 
-        for doc in docs:
-            key = doc.page_content.split("\n")[0].strip()
-            patient_map[key] = doc.page_content
-
-    retriever = vectordb.as_retriever(
-        search_type="similarity",
-        search_kwargs={"k": 3}
-    )
-
-    retriever_global = retriever
-
-    system_prompt = (
-        "Use only the given context to answer the question. "
-        "If the answer is not present, say 'I don't know'.\n\n"
-        "Context:\n{context}"
-    )
-
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", system_prompt),
-        ("human", "{input}")
-    ])
-
-    document_chain = create_stuff_documents_chain(llm, prompt)
-    rag_chain = create_retrieval_chain(retriever, document_chain)
-
+    retriever_global = vectordb.as_retriever(search_type="similarity", search_kwargs={"k": 5})
     print("RAG initialized successfully")
 
 
-def ask_question(question: str):
-    global rag_chain
+def get_context_and_sources(question: str):
+    """Retrieve docs and return context string + best source."""
+    docs = retriever_global.invoke(f"query: {question}")
+    context = "\n\n".join([doc.page_content for doc in docs])
 
-    if rag_chain is None:
-        raise RuntimeError("RAG not initialized")
+    # Pick best source doc by word overlap (simple re-ranking)
+    best_doc = max(docs, key=lambda d: sum(
+        1 for w in question.lower().split() if w in d.page_content.lower()
+    ), default=docs[0])
 
-    question = f"query: {question}"
-
-    stream = rag_chain.stream({"input": question})
-
-    answer = ""
-    sources = []
-
-    for chunk in stream:
-        if "answer" in chunk:
-            answer += chunk["answer"]
-
-        if "context" in chunk:
-            sources = chunk["context"]
-
-    best_page = None
-    best_file = "unknown"
-    max_match_score = 0
-
-    for doc in sources:
-        content = doc.page_content.lower()
-        ans = answer.lower()
-
-        score = sum(1 for word in ans.split() if word in content)
-
-        if score > max_match_score:
-            max_match_score = score
-            best_page = doc.metadata.get("page", None)
-            best_file = doc.metadata.get("source", "unknown")
-
-    return {
-        "answer": answer,
-        "sources": [
-            {
-                "file": best_file,
-                "pages": [best_page] if best_page is not None else []
-            }
-        ]
+    source = {
+        "file": best_doc.metadata.get("source", "unknown"),
+        "page": best_doc.metadata.get("page", 0)
     }
+    return context, source
 
 
 def stream_question(question: str):
-    global retriever_global
-
+    """Yields tokens, then a final JSON citation line."""
     if retriever_global is None:
         raise RuntimeError("RAG not initialized")
 
-    import requests
-    import json
-
-    question_with_prefix = f"query: {question}"
-    docs = retriever_global.invoke(question_with_prefix)
-    context = "\n\n".join([doc.page_content for doc in docs])
+    context, source = get_context_and_sources(question)
 
     payload = {
         "model": "llama3",
@@ -200,21 +89,13 @@ def stream_question(question: str):
             "Use only the given context to answer the question. "
             "If the answer is not present, say 'I don't know'.\n\n"
             f"Context:\n{context}\n\n"
-            f"Question: {question}\n\n"
-            "Answer:"
+            f"Question: {question}\n\nAnswer:"
         ),
         "stream": True,
-        "options": {
-            "temperature": 0,
-            "num_predict": 512,
-        }
+        "options": {"temperature": 0, "num_predict": 512}
     }
 
-    with requests.post(
-        "http://localhost:11434/api/generate",
-        json=payload,
-        stream=True
-    ) as resp:
+    with requests.post("http://localhost:11434/api/generate", json=payload, stream=True) as resp:
         for line in resp.iter_lines():
             if line:
                 data = json.loads(line)
@@ -222,6 +103,8 @@ def stream_question(question: str):
                 if token:
                     yield token
                 if data.get("done", False):
+                    # Send citation as a final special line
+                    yield f"\n\n[SOURCE] {source['file']} | Page {source['page'] + 1}"
                     break
 # 🔹 Techniques Used in This RAG Pipeline
 # 1. Retrieval-Augmented Generation (RAG)
