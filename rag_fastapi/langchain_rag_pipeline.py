@@ -9,26 +9,31 @@ from langchain_classic.chains import create_retrieval_chain
 from langchain_core.documents import Document
 
 rag_chain = None
-patient_map = {}   # for exact lookup
+patient_map = {}
+
+retriever_global = None
+llm_global = None
 
 
 def initialize_rag():
-    global rag_chain, patient_map
+    global rag_chain, patient_map, retriever_global, llm_global
 
     persist_directory = "./chromadb"
 
-    # Embedding model
     embeddings = HuggingFaceEmbeddings(
         model_name="intfloat/e5-base-v2"
     )
 
-    # LLM
     llm = ChatOllama(
         model="llama3",
-        temperature=0
+        temperature=0,
+        streaming=True,
+        num_predict=512,
+        repeat_penalty=1.1,
     )
 
-    # Load or create DB
+    llm_global = llm
+
     if os.path.exists(persist_directory):
         print("Loading existing vector database")
 
@@ -42,28 +47,22 @@ def initialize_rag():
 
         documents = PyPDFDirectoryLoader("pdf/").load()
 
-        # combine all pages
         raw_text = "\n".join([doc.page_content for doc in documents])
 
-        # STEP 2: Split by patient
         patients = raw_text.split("Patient Name:")
 
         clean_docs = []
         for p in patients:
             p = p.strip()
             if p:
-                full_record = "Patient Name: " + p
-                clean_docs.append(full_record)
+                clean_docs.append("Patient Name: " + p)
 
-        print("Total patients:", len(clean_docs))
-
-        # NEW: Create mapping to preserve metadata (file + page)
         patient_metadata_map = {}
 
         for doc in documents:
             text = doc.page_content
             source_file = doc.metadata.get("source", "unknown")
-            page_no = int(doc.metadata.get("page", 0))  #  ensure int
+            page_no = int(doc.metadata.get("page", 0))
 
             parts = text.split("Patient Name:")
             for part in parts:
@@ -73,27 +72,21 @@ def initialize_rag():
 
                 full_record = "Patient Name: " + part
                 key = full_record.split("\n")[0].strip()
-                key = key.replace("  ", " ").strip()
 
                 if key not in patient_metadata_map:
                     patient_metadata_map[key] = {
-                        "pages": set(),   #  use set internally
+                        "pages": set(),
                         "source": source_file
                     }
 
                 patient_metadata_map[key]["pages"].add(page_no)
 
-        # STEP 3: Convert to documents (NO CHUNKING)
         docs = []
         for p in clean_docs:
             key = p.split("\n")[0].strip()
-            key = key.replace("  ", " ").strip()
-
             metadata = patient_metadata_map.get(key, {})
 
             pages = list(metadata.get("pages", []))
-
-            #  store only ONE page in DB (important)
             page_to_store = pages[0] if pages else 0
 
             docs.append(
@@ -101,12 +94,11 @@ def initialize_rag():
                     page_content=p,
                     metadata={
                         "source": metadata.get("source", "unknown"),
-                        "page": page_to_store   #  ONLY int allowed
+                        "page": page_to_store
                     }
                 )
             )
 
-        # STEP 4: Create vector DB
         vectordb = Chroma.from_documents(
             documents=docs,
             embedding=embeddings,
@@ -115,18 +107,17 @@ def initialize_rag():
 
         vectordb.persist()
 
-        # STEP 5: Build exact lookup map
         for doc in docs:
             key = doc.page_content.split("\n")[0].strip()
             patient_map[key] = doc.page_content
 
-    # FIX: Use similarity (NOT MMR)
     retriever = vectordb.as_retriever(
         search_type="similarity",
         search_kwargs={"k": 3}
     )
 
-    # Prompt
+    retriever_global = retriever
+
     system_prompt = (
         "Use only the given context to answer the question. "
         "If the answer is not present, say 'I don't know'.\n\n"
@@ -152,14 +143,18 @@ def ask_question(question: str):
 
     question = f"query: {question}"
 
-    response = rag_chain.invoke({
-        "input": question
-    })
+    stream = rag_chain.stream({"input": question})
 
-    answer = response["answer"]
-    sources = response["context"]
+    answer = ""
+    sources = []
 
-    # Find BEST matching page
+    for chunk in stream:
+        if "answer" in chunk:
+            answer += chunk["answer"]
+
+        if "context" in chunk:
+            sources = chunk["context"]
+
     best_page = None
     best_file = "unknown"
     max_match_score = 0
@@ -168,7 +163,6 @@ def ask_question(question: str):
         content = doc.page_content.lower()
         ans = answer.lower()
 
-        # simple relevance score (word overlap)
         score = sum(1 for word in ans.split() if word in content)
 
         if score > max_match_score:
@@ -185,9 +179,50 @@ def ask_question(question: str):
             }
         ]
     }
-    
-    
 
+
+def stream_question(question: str):
+    global retriever_global
+
+    if retriever_global is None:
+        raise RuntimeError("RAG not initialized")
+
+    import requests
+    import json
+
+    question_with_prefix = f"query: {question}"
+    docs = retriever_global.invoke(question_with_prefix)
+    context = "\n\n".join([doc.page_content for doc in docs])
+
+    payload = {
+        "model": "llama3",
+        "prompt": (
+            "Use only the given context to answer the question. "
+            "If the answer is not present, say 'I don't know'.\n\n"
+            f"Context:\n{context}\n\n"
+            f"Question: {question}\n\n"
+            "Answer:"
+        ),
+        "stream": True,
+        "options": {
+            "temperature": 0,
+            "num_predict": 512,
+        }
+    }
+
+    with requests.post(
+        "http://localhost:11434/api/generate",
+        json=payload,
+        stream=True
+    ) as resp:
+        for line in resp.iter_lines():
+            if line:
+                data = json.loads(line)
+                token = data.get("response", "")
+                if token:
+                    yield token
+                if data.get("done", False):
+                    break
 # 🔹 Techniques Used in This RAG Pipeline
 # 1. Retrieval-Augmented Generation (RAG)
 # 2. Dense Vector Search (Embedding-based retrieval using E5 model)
