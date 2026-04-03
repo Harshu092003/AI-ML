@@ -21,13 +21,15 @@ def initialize_rag():
     else:
         print("Creating new vector database")
         documents = PyPDFDirectoryLoader("pdf/").load()
+        
+        # Combine text from all PDF pages into one big string (separated by new lines)
         raw_text = "\n".join([doc.page_content for doc in documents])
 
-        # Build patient-wise metadata map
+        # Build patient-wise metadata map for source citation and page tracking
         patient_metadata_map = {}
         for doc in documents:
-            source = doc.metadata.get("source", "unknown")
-            page = int(doc.metadata.get("page", 0))
+            source = doc.metadata.get("source", "unknown") # get source file name
+            page = int(doc.metadata.get("page", 0)) # get page number (0-indexed)
             for part in doc.page_content.split("Patient Name:"):
                 part = part.strip()
                 if not part:
@@ -36,6 +38,11 @@ def initialize_rag():
                 if key not in patient_metadata_map:
                     patient_metadata_map[key] = {"pages": set(), "source": source}
                 patient_metadata_map[key]["pages"].add(page)
+                
+#         output = {
+#           "Patient Name: Patient 132": {"pages": {1, 2}, "source": "pdf/file.pdf"},
+#           "Patient Name: Patient 133": {"pages": {1}, "source": "pdf/file.pdf"}
+#        }
 
         # Build docs
         docs = []
@@ -51,7 +58,17 @@ def initialize_rag():
                 page_content=full,
                 metadata={"source": meta.get("source", "unknown"), "page": pages[0] if pages else 0}
             ))
-
+            
+#         langchain_format_output = [
+#          Document(
+#              page_content="Patient Name: Patient 132...",
+#              metadata={"source": "pdf/file.pdf", "page": 1}
+#         ),
+#         Document(
+#              page_content="Patient Name: Patient 133...",
+#              metadata={"source": "pdf/file.pdf", "page": 1}
+#         )
+#       ]
         vectordb = Chroma.from_documents(documents=docs, embedding=embeddings, persist_directory=persist_directory)
         vectordb.persist()
 
@@ -61,8 +78,13 @@ def initialize_rag():
 
 def get_context_and_sources(question: str):
     """Retrieve docs and return context string + best source."""
+    
+    # Sends your question to the retriever
+    # Retriever searches your stored data (vector DB / embeddings)
+    # Returns relevant documents (chunks) , this gives list of relevant documents based on similarity search in the vector database. Each document has content and metadata (source file + page number).
     docs = retriever_global.invoke(f"query: {question}")
-    context = "\n\n".join([doc.page_content for doc in docs])
+    # LLM expects one single prompt string, not a list.
+    context = "\n\n".join([doc.page_content for doc in docs]) 
 
     # Pick best source doc by word overlap (simple re-ranking)
     best_doc = max(docs, key=lambda d: sum(
@@ -96,10 +118,10 @@ def stream_question(question: str):
     }
 
     with requests.post("http://localhost:11434/api/generate", json=payload, stream=True) as resp:
-        for line in resp.iter_lines():
+        for line in resp.iter_lines(): # streaming response line by line in bytes
             if line:
-                data = json.loads(line)
-                token = data.get("response", "")
+                data = json.loads(line) # decode bytes to dict
+                token = data.get("response", "") # extract generated token
                 if token:
                     yield token
                 if data.get("done", False):
@@ -135,3 +157,5 @@ def stream_question(question: str):
 
 # 18. Lightweight Context Filtering (Choosing best doc for final answer source)
 # source citation with page number (not just file) for better traceability
+
+# implemented streaming response(Word by word chunks) from LLM with final source citation as a special line at the end of the stream.
