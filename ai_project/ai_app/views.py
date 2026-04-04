@@ -66,8 +66,8 @@ def stream_rag(request):
         yield f"\n\n[MSG_ID] {msg.id}"  # send message id for email action
 
     response = StreamingHttpResponse(generate(), content_type="text/plain")
-    response["Cache-Control"] = "no-cache"
-    response["X-Accel-Buffering"] = "no"
+    response["Cache-Control"] = "no-cache" # prevent browser caching of streaming response
+    response["X-Accel-Buffering"] = "no" # for nginx reverse proxy, disable buffering to allow real-time streaming
     return response
 
 @require_POST
