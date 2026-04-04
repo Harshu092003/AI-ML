@@ -14,9 +14,10 @@ __pycache__/
 # Models
 *.pt
 *.pth
-
+*.log
 # Jupyter
 .ipynb_checkpoints/
+*.pdf
 chroma_db
 poetry.lock
 
@@ -31,3 +32,4 @@ postman
 chromadb
 __pycache__/
 *.pyc
+logs/

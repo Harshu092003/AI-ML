@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroCore</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0e1117;
+        --surface: #161b27;
+        --surface2: #1e2535;
+        --border: #2a3045;
+        --accent: #4f8ef7;
+        --text: #e8eaf0;
+        --muted: #6b7594;
+        --user-bubble: linear-gradient(135deg, #4f8ef7, #7b5ea7);
+        --bot-bubble: #1e2535;
+        --source: #22c55e;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 260px;
+        min-width: 260px;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 18px 14px;
+        gap: 14px;
+      }
+      .logo {
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--accent);
+        padding: 6px 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent);
+      }
+      .new-chat-btn {
+        background: transparent;
+        border: 1px dashed var(--border);
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        text-align: left;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .new-chat-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .section-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--muted);
+        padding: 0 8px;
+      }
+      .chat-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .chat-list::-webkit-scrollbar {
+        width: 4px;
+      }
+      .chat-list::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+      .chat-item {
+        padding: 9px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--muted);
+        transition: all 0.15s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chat-item:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      .chat-item.active {
+        background: var(--surface2);
+        color: var(--text);
+        border-left: 2px solid var(--accent);
+        padding-left: 10px;
+      }
+      .user-profile {
+        border-top: 1px solid var(--border);
+        padding-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--user-bubble);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .user-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .user-name {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .user-plan {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .chat-header {
+        padding: 16px 28px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Space Mono", monospace;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .header-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--source);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--source);
+        flex-shrink: 0;
+      }
+      .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 30px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        scroll-behavior: smooth;
+      }
+      .chat-box::-webkit-scrollbar {
+        width: 5px;
+      }
+      .chat-box::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 10px;
+      }
+
+      .message {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        animation: fadeUp 0.25s ease;
+        min-width: 0;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .message.user {
+        flex-direction: row-reverse;
+      }
+      .message > div {
+        min-width: 0;
+        max-width: 72%;
+      }
+      .msg-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .bot .msg-avatar {
+        background: var(--surface2);
+        color: var(--accent);
+        border: 1px solid var(--border);
+      }
+      .user .msg-avatar {
+        background: var(--user-bubble);
+        color: white;
+      }
+      .bubble {
+        padding: 13px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.65;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+      .bot .bubble {
+        background: var(--bot-bubble);
+        border: 1px solid var(--border);
+        border-top-left-radius: 3px;
+      }
+      .user .bubble {
+        background: var(--user-bubble);
+        color: white;
+        border-top-right-radius: 3px;
+      }
+      .source-tag {
+        margin-top: 8px;
+        font-size: 11px;
+        font-family: "Space Mono", monospace;
+        color: var(--source);
+        background: rgba(34, 197, 94, 0.08);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 5px;
+        word-break: break-all;
+      }
+
+      /* Email action bar — appears below bot bubble after stream ends */
+      .msg-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .email-btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .email-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .email-btn.sent {
+        border-color: var(--source);
+        color: var(--source);
+        cursor: default;
+      }
+      .email-input-row {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .email-input-row.visible {
+        display: flex;
+      }
+      .email-input-row input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-size: 12px;
+        color: var(--text);
+        outline: none;
+        font-family: "DM Sans", sans-serif;
+        width: 220px;
+      }
+      .email-input-row input:focus {
+        border-color: var(--accent);
+      }
+      .email-send-btn {
+        background: var(--accent);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        white-space: nowrap;
+      }
+      .email-send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .email-status {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* Thinking */
+      .thinking {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .thinking::after {
+        content: "";
+        animation: dots 1.5s steps(5, end) infinite;
+      }
+      @keyframes dots {
+        0% {
+          content: "";
+        }
+        20% {
+          content: ".";
+        }
+        40% {
+          content: "..";
+        }
+        60% {
+          content: "...";
+        }
+        80% {
+          content: "....";
+        }
+        100% {
+          content: ".....";
+        }
+      }
+
+      .input-area {
+        padding: 18px 28px 22px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .input-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 6px 8px 6px 16px;
+        transition: border-color 0.2s;
+      }
+      .input-row:focus-within {
+        border-color: var(--accent);
+      }
+      #userInput {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        padding: 8px 0;
+        min-width: 0;
+      }
+      #userInput::placeholder {
+        color: var(--muted);
+      }
+      .send-btn {
+        background: var(--user-bubble);
+        border: none;
+        color: white;
+        border-radius: 10px;
+        padding: 9px 18px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .send-btn:hover {
+        opacity: 0.88;
+      }
+      .send-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .hint {
+        text-align: center;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="logo">NeuroCore</div>
+      <button class="new-chat-btn" onclick="startNewChat()">
+        ＋ &nbsp;New Chat
+      </button>
+      <div class="section-label">Conversations</div>
+      <div class="chat-list" id="chatList">
+        {% for conv in conversations %}
+        <div
+          class="chat-item {% if forloop.first %}active{% endif %}"
+          data-id="{{ conv.id }}"
+          onclick="loadConversation({{ conv.id }}, this)"
+        >
+          {{ conv.title }}
+        </div>
+        {% empty %}
+        <div style="font-size: 12px; color: var(--muted); padding: 8px">
+          No conversations yet
+        </div>
+        {% endfor %}
+      </div>
+      <div class="user-profile">
+        <div class="avatar">H</div>
+        <div class="user-info">
+          <span class="user-name">Harshvardhan</span>
+          <span class="user-plan">RAG · Local LLM</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="chat-header">
+        <div class="header-dot"></div>
+        <span id="chatTitle">Medical Records Assistant</span>
+      </div>
+
+      <div class="chat-box" id="chatBox">
+        {% if conversations %}
+        <div
+          id="loadingMsg"
+          style="color: var(--muted); font-size: 13px; padding: 10px"
+        >
+          Loading...
+        </div>
+        {% else %}
+        <div class="message bot">
+          <div class="msg-avatar">N</div>
+          <div>
+            <div class="bubble">
+              Hello 👋 Start a new chat to ask about patient records.
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="input-area">
+        <div class="input-row">
+          <input
+            type="text"
+            id="userInput"
+            placeholder="Ask about a patient, diagnosis, medication…"
+            autocomplete="off"
+          />
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            Send ↑
+          </button>
+        </div>
+        <div class="hint">Powered by LLaMA 3 · ChromaDB · LangChain</div>
+      </div>
+    </main>
+
+    <script>
+      const CSRF = "{{ csrf_token }}";
+      let isStreaming = false;
+      let msgCounter = 0;
+      let activeConvId = {% if conversations %}{{ conversations.0.id }}{% else %}null{% endif %};
+
+      function escapeHtml(str) {
+        return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      }
+
+      function renderBubble(bubble, text) {
+        // Strip internal markers before rendering
+        const convIdx = text.indexOf("\n\n[CONV_ID]");
+        if (convIdx !== -1) text = text.slice(0, convIdx);
+        const msgIdx = text.indexOf("\n\n[MSG_ID]");
+        if (msgIdx !== -1) text = text.slice(0, msgIdx);
+
+        const srcIdx = text.indexOf("\n\n[SOURCE]");
+        if (srcIdx !== -1) {
+          const answer = text.slice(0, srcIdx);
+          const source = text.slice(srcIdx + "\n\n[SOURCE]".length).trim();
+          bubble.innerHTML = escapeHtml(answer) + `<div class="source-tag">📄 ${escapeHtml(source)}</div>`;
+        } else {
+          bubble.textContent = text;
+        }
+      }
+
+      /* Append a message; returns { bubbleId, wrapperEl } */
+      function appendMessage(role, content, source, msgId) {
+        const chatBox = document.getElementById("chatBox");
+        const div = document.createElement("div");
+        div.className = `message ${role === "user" ? "user" : "bot"}`;
+        const bubbleId = "b" + (++msgCounter);
+        const avatarLabel = role === "user" ? "H" : "N";
+
+        const sourceHtml = source ? `<div class="source-tag">📄 ${escapeHtml(source)}</div>` : "";
+
+        // Email action section (only for bot messages with a saved msgId)
+        const emailHtml = (role === "bot" && msgId) ? `
+          <div class="msg-actions">
+            <button class="email-btn" onclick="toggleEmailInput(this, ${msgId})">✉ Send via Email</button>
+            <span class="email-status"></span>
+          </div>
+          <div class="email-input-row">
+            <input type="email" placeholder="recipient@example.com"/>
+            <button class="email-send-btn" onclick="submitEmail(this, ${msgId})">Send</button>
+          </div>` : "";
+
+        div.innerHTML = `
+          <div class="msg-avatar">${avatarLabel}</div>
+          <div>
+            <div class="bubble" id="${bubbleId}">${escapeHtml(content)}${sourceHtml}</div>
+            ${emailHtml}
+          </div>`;
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return bubbleId;
+      }
+
+      /* Show/hide email input row */
+      function toggleEmailInput(btn, msgId) {
+        const row = btn.closest("div").nextElementSibling;
+        row.classList.toggle("visible");
+        if (row.classList.contains("visible")) row.querySelector("input").focus();
+      }
+
+      /* Submit email via agent */
+      function submitEmail(btn, msgId) {
+        const row = btn.closest(".email-input-row");
+        const emailVal = row.querySelector("input").value.trim();
+        if (!emailVal) { row.querySelector("input").focus(); return; }
+
+        const statusEl = row.previousElementSibling.querySelector(".email-status");
+        btn.disabled = true;
+        statusEl.textContent = "Sending…";
+
+        fetch("/send-email/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF },
+          body: JSON.stringify({ msg_id: msgId, email: emailVal })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            statusEl.style.color = "var(--source)";
+            statusEl.textContent = `✓ Sent to ${data.to}`;
+            row.classList.remove("visible");
+            // Mark the button as sent
+            const emailBtn = row.previousElementSibling.querySelector(".email-btn");
+            emailBtn.className = "email-btn sent";
+            emailBtn.textContent = "✓ Email Sent";
+            emailBtn.onclick = null;
+          } else {
+            statusEl.style.color = "#f87171";
+            statusEl.textContent = `✗ ${data.error}`;
+            btn.disabled = false;
+          }
+        })
+        .catch(err => {
+          statusEl.style.color = "#f87171";
+          statusEl.textContent = `✗ Network error`;
+          btn.disabled = false;
+        });
+      }
+
+      function setActiveSidebarItem(convId) {
+        document.querySelectorAll(".chat-item").forEach(i => i.classList.remove("active"));
+        const el = document.querySelector(`.chat-item[data-id="${convId}"]`);
+        if (el) el.classList.add("active");
+      }
+
+      function loadConversation(convId, el) {
+        if (isStreaming) return;
+        activeConvId = convId;
+        setActiveSidebarItem(convId);
+        fetch(`/conversation/${convId}/`)
+          .then(r => r.json())
+          .then(data => {
+            document.getElementById("chatTitle").textContent = data.title || "Medical Records Assistant";
+            const chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML = "";
+            if (!data.messages.length) {
+              chatBox.innerHTML = `<div class="message bot"><div class="msg-avatar">N</div><div><div class="bubble">No messages yet. Ask something!</div></div></div>`;
+              return;
+            }
+            // Render stored messages; bot messages get email button using saved id
+            data.messages.forEach(m => appendMessage(m.role, m.content, m.source, m.role === "bot" ? m.id : null));
+          });
+      }
+
+      function startNewChat() {
+        if (isStreaming) return;
+        fetch("/conversation/new/", { method:"POST", headers:{"X-CSRFToken":CSRF} })
+        .then(r => r.json())
+        .then(data => {
+          activeConvId = data.id;
+          const list = document.getElementById("chatList");
+          const placeholder = list.querySelector("div:not(.chat-item)");
+          if (placeholder) placeholder.remove();
+          const item = document.createElement("div");
+          item.className = "chat-item active";
+          item.dataset.id = data.id;
+          item.textContent = "New Chat";
+          item.onclick = () => loadConversation(data.id, item);
+          list.querySelectorAll(".chat-item").forEach(i => i.classList.remove("active"));
+          list.prepend(item);
+          document.getElementById("chatBox").innerHTML = `
+            <div class="message bot"><div class="msg-avatar">N</div>
+            <div><div class="bubble">New session started 👋 What would you like to know?</div></div></div>`;
+          document.getElementById("chatTitle").textContent = "New Chat";
+        });
+      }
+
+      function sendMessage() {
+        if (isStreaming) return;
+        const input = document.getElementById("userInput");
+        const question = input.value.trim();
+        if (!question) return;
+
+        if (!activeConvId) { startNewChat(); setTimeout(sendMessage, 300); return; }
+
+        const chatBox = document.getElementById("chatBox");
+        const sendBtn = document.getElementById("sendBtn");
+
+        appendMessage("user", question, "", null);
+
+        const bubbleId = "b" + (++msgCounter);
+        const botDiv = document.createElement("div");
+        botDiv.className = "message bot";
+        botDiv.innerHTML = `
+          <div class="msg-avatar">N</div>
+          <div><div class="bubble" id="${bubbleId}"><span class="thinking">Thinking</span></div></div>`;
+        chatBox.appendChild(botDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        input.value = "";
+        isStreaming = true;
+        sendBtn.disabled = true;
+
+        const bubble = document.getElementById(bubbleId);
+        let fullText = "";
+        let firstToken = true;
+
+        fetch(`/stream/?question=${encodeURIComponent(question)}&conv_id=${activeConvId}`)
+          .then(response => {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            function read() {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  // Extract CONV_ID and MSG_ID from end of stream
+                  let displayText = fullText;
+                  let newConvId = null, savedMsgId = null;
+
+                  const cidIdx = fullText.indexOf("\n\n[CONV_ID]");
+                  if (cidIdx !== -1) {
+                    displayText = fullText.slice(0, cidIdx);
+                    const rest = fullText.slice(cidIdx + "\n\n[CONV_ID]".length);
+                    const midIdx = rest.indexOf("\n\n[MSG_ID]");
+                    if (midIdx !== -1) {
+                      newConvId = parseInt(rest.slice(0, midIdx).trim());
+                      savedMsgId = parseInt(rest.slice(midIdx + "\n\n[MSG_ID]".length).trim());
+                    } else {
+                      newConvId = parseInt(rest.trim());
+                    }
+                  }
+
+                  // Update sidebar if new conv created server-side
+                  if (newConvId && newConvId !== activeConvId) {
+                    activeConvId = newConvId;
+                    const existing = document.querySelector(`.chat-item[data-id="${newConvId}"]`);
+                    if (!existing) {
+                      const list = document.getElementById("chatList");
+                      const item = document.createElement("div");
+                      item.className = "chat-item active";
+                      item.dataset.id = newConvId;
+                      item.textContent = question.slice(0, 60);
+                      item.onclick = () => loadConversation(newConvId, item);
+                      list.querySelectorAll(".chat-item").forEach(i => i.classList.remove("active"));
+                      list.prepend(item);
+                    }
+                  }
+
+                  // Final render with email button
+                  renderBubble(bubble, displayText);
+
+                  // Inject email action below the bubble
+                  if (savedMsgId) {
+                    const actionsDiv = document.createElement("div");
+                    actionsDiv.innerHTML = `
+                      <div class="msg-actions">
+                        <button class="email-btn" onclick="toggleEmailInput(this, ${savedMsgId})">✉ Send via Email</button>
+                        <span class="email-status"></span>
+                      </div>
+                      <div class="email-input-row">
+                        <input type="email" placeholder="recipient@example.com"/>
+                        <button class="email-send-btn" onclick="submitEmail(this, ${savedMsgId})">Send</button>
+                      </div>`;
+                    bubble.parentElement.appendChild(actionsDiv.children[0]);
+                    bubble.parentElement.appendChild(actionsDiv.children[0]);
+                  }
+
+                  isStreaming = false;
+                  sendBtn.disabled = false;
+                  return;
+                }
+                const chunk = decoder.decode(value, { stream: true });
+                fullText += chunk;
+                if (firstToken) { bubble.innerHTML = ""; firstToken = false; }
+                renderBubble(bubble, fullText);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                read();
+              });
+            }
+            read();
+          })
+          .catch(err => {
+            bubble.innerHTML = `<span style="color:#f87171">Error: ${err.message}</span>`;
+            isStreaming = false;
+            sendBtn.disabled = false;
+          });
+      }
+
+      document.getElementById("userInput").addEventListener("keydown", e => {
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      });
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (activeConvId) loadConversation(activeConvId, document.querySelector(".chat-item.active"));
+      });
+    </script>
+  </body>
+</html>
