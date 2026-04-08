@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent # to root of project (ai_project/) , resolve for absolute path , parent for one level up (ai_project/ai_project/), parent again for root (ai_project/)
 
 
 # Quick-start development settings - unsuitable for production

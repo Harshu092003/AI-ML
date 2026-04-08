@@ -5,18 +5,17 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_core.documents import Document
+from pathlib import Path
 
 retriever_global = None
 
-import os
-
 # This file is at ai_app/rag/langchain_rag_pipeline.py
 # So __file__ gives us the absolute path to this file
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent 
 # BASE_DIR = /home/harshvardhan/AI-ML/ai_project/ai_app/rag/
 
-PDF_DIR      = os.path.join(BASE_DIR, "..", "rag/pdf")      # → ai_app/pdf/
-CHROMA_DIR   = os.path.join(BASE_DIR, "..", "rag/chromadb") # → ai_app/chromadb/
+PDF_DIR      = os.path.join(BASE_DIR, "..", "rag/pdf")      # → ai_app/rag/pdf/
+CHROMA_DIR   = os.path.join(BASE_DIR, "..", "rag/chromadb") # → ai_app/rag/chromadb/
 
 def initialize_rag():
     global retriever_global
@@ -31,9 +30,8 @@ def initialize_rag():
 
     else:
         print("Creating new vector database")
-        print(f"Loading existing vector database from {CHROMA_DIR}")
         
-        documents = PyPDFDirectoryLoader(PDF_DIR).load()
+        documents = PyPDFDirectoryLoader(PDF_DIR).load() # stores in documents as list of Document(page_content, metadata={source: file, page: num})
         print(f"Loaded {len(documents)} pages") 
         # Combine text from all PDF pages into one big string (separated by new lines)
         raw_text = "\n".join([doc.page_content for doc in documents])

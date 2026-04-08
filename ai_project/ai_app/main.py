@@ -1,5 +1,5 @@
 # cd into the rag_fastapi directory and run:
-# uvicorn app:app --reload
+# uvicorn main:app --reload
 
 # for testing the streaming endpoint, you can use curl:
 # curl --no-buffer "http://localhost:8000/stream?question=Patient%20200"  %20 is used for spacing in the URL
