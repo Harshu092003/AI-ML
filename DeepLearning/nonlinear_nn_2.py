@@ -24,7 +24,7 @@ class TempClassifier(nn.Module):
 
 model = TempClassifier()
 loss_fn = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.05)
+optimizer = optim.Adam(model.parameters(), lr=0.05) 
 
 for epoch in range(2000):
     pred = model(X)

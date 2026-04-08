@@ -1,6 +1,7 @@
 # SGD (Stochastic Gradient Descent)
 
 # An optimizer that updates model weights step by step using gradients, moving slowly toward minimum loss.
+# gradient is an value used to update the weights of the model in the direction that minimizes the loss function.
 
 import torch
 import torch.nn as nn
