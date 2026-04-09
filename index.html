@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harshvardhan Pujari — Portfolio</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
+    <style>
+        :root {
+            --blur: 24px;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-hover: rgba(255, 255, 255, 0.13);
+            --accent: #2997ff;
+            --accent2: #bf5af2;
+            --accent3: #30d158;
+            --text: #f5f5f7;
+            --text-muted: rgba(245, 245, 247, 0.55);
+            --radius: 20px;
+            --font: 'Outfit', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: #000;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 80% 60% at 20% 10%, #0a2a6e 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 80% 80%, #3a0a5e 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 60% 20%, #001a3a 0%, transparent 60%), #04060f;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .4;
+            animation: drift 12s ease-in-out infinite alternate;
+        }
+
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: #1a5fff;
+            top: -100px;
+            left: -100px;
+            animation-duration: 14s;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: #8b2fff;
+            bottom: 10%;
+            right: -80px;
+            animation-duration: 18s;
+            animation-delay: -4s;
+        }
+
+        .orb3 {
+            width: 300px;
+            height: 300px;
+            background: #00b4ff;
+            top: 40%;
+            left: 30%;
+            animation-duration: 22s;
+            animation-delay: -8s;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(40px, 30px) scale(1.08);
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            height: 64px;
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(var(--blur)) saturate(180%);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-logo {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: .02em;
+            color: var(--text);
+            font-family: var(--mono);
+        }
+
+        .nav-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: .88rem;
+            font-weight: 500;
+            letter-spacing: .03em;
+            transition: color .2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .2s, transform .2s;
+            font-family: var(--font);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-cta:hover {
+            opacity: .85;
+            transform: scale(1.03);
+            color: #fff;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(var(--blur)) saturate(160%);
+            -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            transition: background .3s, border-color .3s, transform .3s;
+        }
+
+        .glass:hover {
+            background: var(--glass-hover);
+            border-color: rgba(255, 255, 255, .22);
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 24px 60px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(41, 151, 255, .12);
+            border: 1px solid rgba(41, 151, 255, .3);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            animation: fadeUp .8s ease both;
+        }
+
+        .hero-badge .material-icons-round {
+            font-size: 14px;
+        }
+
+        .hero-name {
+            font-size: clamp(2.8rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1.04;
+            letter-spacing: -.03em;
+            background: linear-gradient(135deg, #fff 30%, rgba(255, 255, 255, .5) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeUp .8s .1s ease both;
+            margin-bottom: 12px;
+        }
+
+        .hero-role {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            font-weight: 400;
+            color: var(--text-muted);
+            animation: fadeUp .8s .2s ease both;
+            margin-bottom: 32px;
+        }
+
+        .hero-role span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .hero-desc {
+            max-width: 560px;
+            margin: 0 auto 40px;
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            animation: fadeUp .8s .3s ease both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp .8s .4s ease both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: .95rem;
+            text-decoration: none;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 32px rgba(41, 151, 255, .4);
+            color: #fff;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(var(--blur));
+            color: var(--text);
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: .95rem;
+            text-decoration: none;
+            transition: background .2s, transform .2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--glass-hover);
+            transform: scale(1.04);
+            color: var(--text);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            margin-top: 64px;
+            animation: fadeUp .8s .5s ease both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-num span {
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: .78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-top: 4px;
+        }
+
+        section {
+            padding: 100px 0;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -.02em;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .section-sub {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 480px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .skill-card {
+            padding: 24px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--card-accent, var(--accent)), transparent);
+            opacity: .7;
+        }
+
+        .skill-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .skill-card h4 {
+            font-size: .9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+            letter-spacing: .02em;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            font-size: .72rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: var(--text-muted);
+            font-family: var(--mono);
+            transition: color .2s, background .2s, border-color .2s;
+        }
+
+        .exp-timeline {
+            margin-top: 48px;
+            position: relative;
+        }
+
+        .exp-timeline::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+            opacity: .3;
+        }
+
+        .exp-item {
+            padding-left: 72px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .exp-dot {
+            position: absolute;
+            left: 16px;
+            top: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid rgba(41, 151, 255, .3);
+            box-shadow: 0 0 16px rgba(41, 151, 255, .5);
+        }
+
+        .exp-card {
+            padding: 28px 32px;
+        }
+
+        .exp-role {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .exp-company {
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .exp-date {
+            font-size: .78rem;
+            color: var(--text-muted);
+            font-family: var(--mono);
+            margin-bottom: 20px;
+        }
+
+        .exp-bullets {
+            list-style: none;
+        }
+
+        .exp-bullets li {
+            font-size: .88rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            padding: 9px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            display: flex;
+            gap: 12px;
+        }
+
+        .exp-bullets li:last-child {
+            border-bottom: none;
+        }
+
+        .exp-bullets li::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-top: 7px;
+            flex-shrink: 0;
+        }
+
+        .param-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: .72rem;
+            font-weight: 600;
+            font-family: var(--mono);
+            padding: 5px 12px;
+            border-radius: 100px;
+        }
+
+        .stack-row {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .stack-label {
+            font-size: .65rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .pill {
+            font-size: .68rem;
+            font-weight: 600;
+            font-family: var(--mono);
+            padding: 3px 10px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            color: var(--text-muted);
+        }
+
+        .proj-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .proj-card {
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .proj-tag {
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .proj-tag .material-icons-round {
+            font-size: 14px;
+        }
+
+        .proj-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .proj-desc {
+            font-size: .85rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .proj-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .edu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .edu-card {
+            padding: 28px;
+        }
+
+        .edu-level {
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--accent2);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .edu-inst {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .edu-score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-family: var(--mono);
+        }
+
+        .edu-score small {
+            font-size: .85rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .edu-year {
+            font-size: .78rem;
+            color: var(--text-muted);
+        }
+
+        .contact-card {
+            padding: 56px;
+            text-align: center;
+            max-width: 640px;
+            margin: 48px auto 0;
+        }
+
+        .contact-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .contact-sub {
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid rgba(255, 255, 255, .12);
+            color: var(--text);
+            text-decoration: none;
+            font-size: .88rem;
+            font-weight: 600;
+            transition: background .2s, transform .2s;
+        }
+
+        .contact-link:hover {
+            background: rgba(255, 255, 255, .12);
+            transform: translateY(-2px);
+            color: var(--text);
+        }
+
+        .contact-link .material-icons-round {
+            font-size: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+            color: var(--text-muted);
+            font-size: .8rem;
+        }
+
+        footer span {
+            color: var(--accent);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #04060f;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(41, 151, 255, .3);
+            border-radius: 4px;
+        }
+
+        @media(max-width:768px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .contact-card {
+                padding: 36px 24px;
+            }
+
+            .exp-item {
+                padding-left: 48px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-canvas">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <nav>
+        <div class="nav-logo">&lt;<span>HP</span> /&gt;</div>
+        <ul class="nav-links">
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="mailto:Harshvardhanpujari2003@gmail.com" class="nav-cta">Hire Me</a>
+    </nav>
+
+    <div style="position:relative;z-index:2;">
+
+        <!-- HERO -->
+        <section class="hero" id="home">
+            <div>
+                <div class="hero-badge">
+                    <span class="material-icons-round">auto_awesome</span>
+                    Software Developer &middot; AI/ML &middot; IoT Engineer
+                </div>
+                <h1 class="hero-name">Harshvardhan<br />Pujari</h1>
+                <p class="hero-role">Building intelligent systems &amp; <span>scalable backends</span></p>
+                <p class="hero-desc">Final-year CS student at Kirti College with a 9.41 CGPA, currently working at
+                    Thesis Mumbai Tech. Passionate about AI/ML, RAG pipelines, IoT systems, and full-stack engineering.
+                </p>
+                <div class="hero-actions">
+                    <a href="#experience" class="btn-primary">
+                        <span class="material-icons-round" style="font-size:18px">work</span>View My Work
+                    </a>
+                    <a href="#contact" class="btn-outline">
+                        <span class="material-icons-round" style="font-size:18px">mail</span>Get In Touch
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-num">9.41<span>+</span></div>
+                        <div class="stat-label">CGPA</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num"><span>5</span>+</div>
+                        <div class="stat-label">Major Projects</div>
+                    </div>
+                    <div>
+                        <div class="stat-num"><span>10</span>+</div>
+                        <div class="stat-label">Small Projects</div>
+                    </div>
+
+                    <div class="stat">
+                        <div class="stat-num">20<span>+</span></div>
+                        <div class="stat-label">Technologies</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num"><span>1</span></div>
+                        <div class="stat-label">DRDO Hackathon</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="skills">
+            <div class="container">
+                <div class="fade-in">
+                    <div class="section-label">Skills &amp; Expertise</div>
+                    <h2 class="section-title">Technical Arsenal</h2>
+                    <p class="section-sub">A broad stack spanning AI/ML, backend APIs, IoT, databases, and front-end
+                        tooling.</p>
+                </div>
+                <div class="skills-grid">
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#2997ff;">
+                        <div class="skill-card-icon" style="background:rgba(41,151,255,.12)">
+                            <span class="material-icons-round" style="color:#2997ff;font-size:22px">psychology</span>
+                        </div>
+                        <h4>AI / ML &amp; Deep Learning</h4>
+                        <div class="skill-tags">
+                            <span class="tag">TensorFlow</span><span class="tag">PyTorch</span>
+                            <span class="tag">LlamaIndex</span><span class="tag">FAISS</span>
+                            <span class="tag">RAG</span><span class="tag">MedGemma</span>
+                            <span class="tag">Faster-Whisper</span><span class="tag">ENTitaNet</span>
+                        </div>
+                    </div>
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#bf5af2;">
+                        <div class="skill-card-icon" style="background:rgba(191,90,242,.12)">
+                            <span class="material-icons-round" style="color:#bf5af2;font-size:22px">api</span>
+                        </div>
+                        <h4>Backend &amp; APIs</h4>
+                        <div class="skill-tags">
+                            <span class="tag">Python</span><span class="tag">Django</span>
+                            <span class="tag">FastAPI</span><span class="tag">Node.js</span>
+                            <span class="tag">Express.js</span><span class="tag">JWT</span>
+                            <span class="tag">CORS</span><span class="tag">Docker</span>
+                        </div>
+                    </div>
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#30d158;">
+                        <div class="skill-card-icon" style="background:rgba(48,209,88,.12)">
+                            <span class="material-icons-round" style="color:#30d158;font-size:22px">storage</span>
+                        </div>
+                        <h4>Databases</h4>
+                        <div class="skill-tags">
+                            <span class="tag">PostgreSQL</span><span class="tag">MySQL</span>
+                            <span class="tag">Vector DB</span><span class="tag">FAISS</span>
+                        </div>
+                    </div>
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#ff9f0a;">
+                        <div class="skill-card-icon" style="background:rgba(255,159,10,.12)">
+                            <span class="material-icons-round"
+                                style="color:#ff9f0a;font-size:22px">developer_board</span>
+                        </div>
+                        <h4>IoT &amp; Embedded</h4>
+                        <div class="skill-tags">
+                            <span class="tag">ESP32</span><span class="tag">Arduino</span>
+                            <span class="tag">WebSocket</span><span class="tag">Real-time Sensors</span>
+                            <span class="tag">Firmware Debug</span>
+                        </div>
+                    </div>
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#ff375f;">
+                        <div class="skill-card-icon" style="background:rgba(255,55,95,.12)">
+                            <span class="material-icons-round" style="color:#ff375f;font-size:22px">web</span>
+                        </div>
+                        <h4>Frontend</h4>
+                        <div class="skill-tags">
+                            <span class="tag">HTML</span><span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span><span class="tag">Bootstrap</span>
+                            <span class="tag">Flutter</span><span class="tag">Git</span>
+                        </div>
+                    </div>
+
+                    <div class="glass skill-card fade-in" style="--card-accent:#64d2ff;">
+                        <div class="skill-card-icon" style="background:rgba(100,210,255,.12)">
+                            <span class="material-icons-round" style="color:#64d2ff;font-size:22px">terminal</span>
+                        </div>
+                        <h4>DevOps &amp; Systems</h4>
+                        <div class="skill-tags">
+                            <span class="tag">Linux (Ubuntu)</span><span class="tag">Shell Scripting</span>
+                            <span class="tag">Docker</span><span class="tag">Nginx</span>
+                            <span class="tag">Gunicorn</span><span class="tag">CI/CD</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="experience">
+            <div class="container">
+                <div class="fade-in">
+                    <div class="section-label">Work History</div>
+                    <h2 class="section-title">Experience</h2>
+                    <p class="section-sub">Real-world engineering across healthcare tech, IoT systems, AI pipelines, and
+                        government hackathons.</p>
+                </div>
+
+                <div class="exp-timeline">
+
+                    <!-- Thesis Mumbai Tech -->
+                    <div class="exp-item fade-in">
+                        <div class="exp-dot"></div>
+                        <div class="glass exp-card">
+                            <div
+                                style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+                                <div class="exp-role">Software Developer</div>
+                                <span
+                                    style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(41,151,255,.12);color:#2997ff;border:1px solid rgba(41,151,255,.25);border-radius:100px;padding:4px 12px;">Full-time
+                                    &middot; Current</span>
+                            </div>
+                            <div class="exp-company" style="color:#2997ff;">
+                                <span class="material-icons-round" style="font-size:14px">business</span>
+                                Thesis Mumbai Tech, Mumbai
+                            </div>
+                            <div class="exp-date">April 2025 &mdash; Present</div>
+                            <ul class="exp-bullets">
+                                <li>Digitalized hospital medical consent procedures by building a full-stack web
+                                    application for online patient data entry, digital consent form filling, and
+                                    multi-party digital signature generation for doctors, kin, and patients — with data
+                                    stored securely in PostgreSQL and consent forms auto-generated as PDFs. Packaged the
+                                    complete solution in Docker for seamless production deployment.</li>
+                                <li>Developed a dynamic Prescription Project featuring LaTeX-based PDF generation for
+                                    professional medical prescriptions. Web-scraped comprehensive drug and interaction
+                                    data from drugs.com API using BeautifulSoup and Requests — building a large-scale
+                                    database covering medicine details, alcohol interactions, and cross-drug
+                                    interactions — stored in structured CSV files and integrated directly into the
+                                    prescription system.</li>
+                                <li>Built an AI-based multi-speaker diarization and transcription system for the
+                                    government DRDO/NCIIPC hackathon — implemented cosine similarity-based speaker
+                                    matching, ENTitaNet for speaker verification, and Faster-Whisper Large v3 for
+                                    speech-to-text, with chunk-based audio segmentation enabling precise speaker
+                                    identification in complex multi-voice government recordings.</li>
+                                <li>Integrated MedGemma-4B-IT (HuggingFace) into a medical intelligence application —
+                                    optimized the model for efficient inference and designed a complete
+                                    Retrieval-Augmented Generation (RAG) pipeline using LlamaIndex with FAISS vector
+                                    database for high-performance semantic search. Leveraged Docling for document
+                                    ingestion and built scalable, production-ready FastAPI endpoints for serving model
+                                    responses.</li>
+                            </ul>
+                            <div class="stack-row">
+                                <span class="stack-label">Stack</span>
+                                <span class="pill">Django REST</span><span class="pill">FastAPI</span>
+                                <span class="pill">PostgreSQL</span><span class="pill">LlamaIndex</span>
+                                <span class="pill">FAISS</span><span class="pill">MedGemma-4B</span>
+                                <span class="pill">Faster-Whisper</span><span class="pill">Docker</span>
+                                <span class="pill">BeautifulSoup</span><span class="pill">LaTeX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BabyWarmer -->
+                    <div class="exp-item fade-in">
+                        <div class="exp-dot"
+                            style="background:#30d158;border-color:rgba(48,209,88,.3);box-shadow:0 0 16px rgba(48,209,88,.5);">
+                        </div>
+                        <div class="glass exp-card">
+                            <div
+                                style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+                                <div class="exp-role">Full-Stack Developer &amp; IoT Backend Engineer</div>
+                                <span
+                                    style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(48,209,88,.12);color:#30d158;border:1px solid rgba(48,209,88,.25);border-radius:100px;padding:4px 12px;">IoT
+                                    &middot; Real-time &middot; Embedded</span>
+                            </div>
+                            <div class="exp-company" style="color:#30d158;">
+                                <span class="material-icons-round" style="font-size:14px">child_care</span>
+                                BabyWarmer Project &mdash; Smart Neonatal Care System
+                            </div>
+                            <div class="exp-date">2024 &mdash; 2025</div>
+
+                            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;">
+                                <span class="param-chip"
+                                    style="background:rgba(255,159,10,.1);border:1px solid rgba(255,159,10,.25);color:#ff9f0a;">
+                                    <span class="material-icons-round"
+                                        style="font-size:13px">thermostat</span>Temperature &amp; Heating
+                                </span>
+                                <span class="param-chip"
+                                    style="background:rgba(100,210,255,.1);border:1px solid rgba(100,210,255,.25);color:#64d2ff;">
+                                    <span class="material-icons-round" style="font-size:13px">light_mode</span>Lux Level
+                                </span>
+                                <span class="param-chip"
+                                    style="background:rgba(191,90,242,.1);border:1px solid rgba(191,90,242,.25);color:#bf5af2;">
+                                    <span class="material-icons-round" style="font-size:13px">compress</span>Atmospheric
+                                    Pressure
+                                </span>
+                                <span class="param-chip"
+                                    style="background:rgba(48,209,88,.1);border:1px solid rgba(48,209,88,.25);color:#30d158;">
+                                    <span class="material-icons-round" style="font-size:13px">volume_up</span>Volume /
+                                    Sound Level
+                                </span>
+                                <span class="param-chip"
+                                    style="background:rgba(255,55,95,.1);border:1px solid rgba(255,55,95,.25);color:#ff375f;">
+                                    <span class="material-icons-round" style="font-size:13px">water_drop</span>Humidity
+                                </span>
+                                <span class="param-chip"
+                                    style="background:rgba(41,151,255,.1);border:1px solid rgba(41,151,255,.25);color:#2997ff;">
+                                    <span class="material-icons-round" style="font-size:13px">speed</span>Oxygen
+                                    SpO&#8322;
+                                </span>
+                            </div>
+
+                            <ul class="exp-bullets">
+                                <li>Architected and owned the complete Django (Django REST Framework) backend for a
+                                    smart neonatal baby warmer system — designed RESTful APIs to ingest, validate, and
+                                    persist real-time sensor data streams from IoT hardware, with per-device JWT
+                                    authentication and CORS-secured cross-origin communication between the hardware
+                                    endpoints and the web dashboard.</li>
+                                <li>Integrated 6-channel environmental monitoring from ESP32 and Arduino
+                                    microcontrollers: lux intensity (ambient light monitoring for phototherapy
+                                    compliance), atmospheric pressure via BMP280 sensor, incubator air and body
+                                    temperature via DS18B20 and DHT22, sound/volume level via SPL meter (neonatal noise
+                                    safety), relative humidity, and SpO&#8322; oxygen saturation — all streamed live
+                                    over HTTP polling and WebSocket connections, persisted to PostgreSQL with
+                                    timestamped readings per device.</li>
+                                <li>Built a responsive real-time monitoring dashboard frontend using HTML, CSS,
+                                    JavaScript, and Bootstrap — featuring live auto-refreshing parameter cards for all 6
+                                    sensor channels, color-coded status badges (Safe / Warning / Critical), trend
+                                    history sparklines, and a layout optimized for ward-side tablets and nurse stations
+                                    — deployable with zero build tools.</li>
+                                <li>Designed a clinical threshold alerting engine that evaluated each incoming sensor
+                                    reading against medically defined safe ranges — triggering real-time alarm events
+                                    with on-screen alert banners and browser audio notifications when parameters
+                                    exceeded danger thresholds (e.g., incubator temperature above 38°C, lux below
+                                    phototherapy minimum, excessive ambient sound levels). A core patient safety feature
+                                    for neonatal care.</li>
+                                <li>Conducted hands-on testing directly on IoT hardware in a lab environment — flashed
+                                    and iterated on ESP32 firmware, validated sensor wiring and ADC calibration,
+                                    resolved floating-point precision errors in raw sensor readings, and diagnosed and
+                                    fixed packet-loss anomalies in wireless HTTP data transmission — ensuring end-to-end
+                                    data integrity from physical sensor to browser UI.</li>
+                                <li>Built a multi-stage Docker setup for the complete application stack — containerized
+                                    Django backend, static frontend assets, and PostgreSQL database as independent
+                                    services; orchestrated with Docker Compose for local-to-production parity; and
+                                    configured a CI/CD pipeline for automated Docker image builds and zero-downtime
+                                    rolling deployments triggered on code push to the main branch.</li>
+                                <li>Packaged the system into a production-ready Docker image with environment-based
+                                    config injection via dotenv, Gunicorn WSGI application server, Nginx reverse proxy
+                                    for static file serving and SSL termination, and automated Django database
+                                    migrations on container startup — enabling single-command hospital ward deployment
+                                    with <code
+                                        style="font-family:var(--mono);font-size:.78rem;color:#30d158;background:rgba(48,209,88,.08);padding:1px 6px;border-radius:4px;">docker compose up</code>.
+                                </li>
+                            </ul>
+
+                            <div class="stack-row">
+                                <span class="stack-label">Stack</span>
+                                <span class="pill">Django REST</span><span class="pill">PostgreSQL</span>
+                                <span class="pill">WebSocket</span><span class="pill">ESP32</span>
+                                <span class="pill">Arduino</span><span class="pill">Docker</span>
+                                <span class="pill">Docker Compose</span><span class="pill">Nginx</span>
+                                <span class="pill">Gunicorn</span><span class="pill">Bootstrap</span>
+                                <span class="pill">JavaScript</span><span class="pill">JWT</span>
+                                <span class="pill">CI/CD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section id="projects">
+            <div class="container">
+                <div class="fade-in">
+                    <div class="section-label">Featured Work</div>
+                    <h2 class="section-title">Projects</h2>
+                    <p class="section-sub">Highlights from production-grade and hackathon work.</p>
+                </div>
+                <div class="proj-grid">
+
+                    <div class="glass proj-card fade-in">
+                        <div class="proj-tag" style="color:#2997ff;">
+                            <span class="material-icons-round">health_and_safety</span>Healthcare Tech
+                        </div>
+                        <div class="proj-title">Medical Consent Digitalization</div>
+                        <div class="proj-desc">Full-stack web app replacing paper consent forms with digital signatures
+                            for doctor, kin, and patient. PostgreSQL data storage, auto PDF generation, and Docker
+                            production packaging.</div>
+                        <div class="proj-stack">
+                            <span class="pill">Django</span><span class="pill">PostgreSQL</span>
+                            <span class="pill">LaTeX PDF</span><span class="pill">Docker</span><span
+                                class="pill">Digital Signature</span>
+                        </div>
+                    </div>
+
+                    <div class="glass proj-card fade-in">
+                        <div class="proj-tag" style="color:#30d158;">
+                            <span class="material-icons-round">child_care</span>IoT &middot; Healthcare
+                        </div>
+                        <div class="proj-title">BabyWarmer Smart Neonatal System</div>
+                        <div class="proj-desc">Full-stack IoT platform for neonatal care — real-time monitoring of 6
+                            parameters (temperature, lux, pressure, sound, humidity, SpO&#8322;) from ESP32 devices with
+                            live dashboard, clinical alerting, and Docker CI/CD deployment.</div>
+                        <div class="proj-stack">
+                            <span class="pill">Django REST</span><span class="pill">ESP32</span>
+                            <span class="pill">WebSocket</span><span class="pill">Docker</span><span
+                                class="pill">Nginx</span>
+                        </div>
+                    </div>
+
+                    <div class="glass proj-card fade-in">
+                        <div class="proj-tag" style="color:#bf5af2;">
+                            <span class="material-icons-round">hub</span>RAG / AI
+                        </div>
+                        <div class="proj-title">MedGemma RAG Pipeline</div>
+                        <div class="proj-desc">MedGemma-4B-IT integrated with a full RAG pipeline using LlamaIndex and
+                            FAISS vector search. Docling for document processing, FastAPI for scalable clinical
+                            intelligence serving.</div>
+                        <div class="proj-stack">
+                            <span class="pill">LlamaIndex</span><span class="pill">FAISS</span>
+                            <span class="pill">MedGemma</span><span class="pill">FastAPI</span><span
+                                class="pill">Docling</span>
+                        </div>
+                    </div>
+
+                    <div class="glass proj-card fade-in">
+                        <div class="proj-tag" style="color:#ff375f;">
+                            <span class="material-icons-round">mic</span>DRDO Hackathon
+                        </div>
+                        <div class="proj-title">Multi-Speaker Diarization System</div>
+                        <div class="proj-desc">Government DRDO/NCIIPC hackathon — chunk-based audio segmentation, cosine
+                            similarity speaker matching, ENTitaNet speaker verification, and Faster-Whisper Large v3
+                            transcription.</div>
+                        <div class="proj-stack">
+                            <span class="pill">Faster-Whisper</span><span class="pill">ENTitaNet</span>
+                            <span class="pill">Cosine Similarity</span><span class="pill">Python</span>
+                        </div>
+                    </div>
+
+                    <div class="glass proj-card fade-in">
+                        <div class="proj-tag" style="color:#ff9f0a;">
+                            <span class="material-icons-round">medication</span>Healthcare Data
+                        </div>
+                        <div class="proj-title">Prescription + Drug Interaction DB</div>
+                        <div class="proj-desc">Dynamic prescription form with LaTeX PDF generation. Scraped drugs.com to
+                            build a large-scale medicine and drug interaction database (alcohol + cross-drug), stored in
+                            CSV and integrated into the app.</div>
+                        <div class="proj-stack">
+                            <span class="pill">BeautifulSoup</span><span class="pill">Pandas</span>
+                            <span class="pill">LaTeX</span><span class="pill">Django</span><span class="pill">CSV</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCATION -->
+        <section id="education">
+            <div class="container">
+                <div class="fade-in">
+                    <div class="section-label">Academic Background</div>
+                    <h2 class="section-title">Education</h2>
+                    <p class="section-sub">Consistent academic performance with a focus on Computer Science.</p>
+                </div>
+                <div class="edu-grid">
+
+                    <div class="glass edu-card fade-in">
+                        <div class="edu-level">Bachelor's Degree</div>
+                        <div class="edu-inst">Kirti College</div>
+                        <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px;">B.Sc. Computer Science
+                        </div>
+                        <div class="edu-score">9.41 <small>CGPA</small></div>
+                        <div class="edu-year">2022 &ndash; 2025</div>
+                    </div>
+
+                    <div class="glass edu-card fade-in">
+                        <div class="edu-level">HSC (XII Science)</div>
+                        <div class="edu-inst">Maharshi Dayanand College</div>
+                        <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px;">Science Stream</div>
+                        <div class="edu-score">60.83 <small>%</small></div>
+                        <div class="edu-year">March 2022</div>
+                    </div>
+
+                    <div class="glass edu-card fade-in">
+                        <div class="edu-level">SSC (X)</div>
+                        <div class="edu-inst">Shivaji Vidyalaya</div>
+                        <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px;">Secondary Education
+                        </div>
+                        <div class="edu-score">82.80 <small>%</small></div>
+                        <div class="edu-year">Secondary School</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="contact">
+            <div class="container">
+                <div class="fade-in">
+                    <div class="section-label">Get In Touch</div>
+                    <h2 class="section-title">Let's Connect</h2>
+                </div>
+                <div class="glass contact-card fade-in">
+                    <div class="contact-title">Open to Opportunities</div>
+                    <p class="contact-sub">Whether it's a full-time role, freelance project, or collaboration in AI/ML,
+                        IoT, or full-stack — I'd love to talk.</p>
+                    <div class="contact-links">
+                        <a href="mailto:Harshvardhanpujari2003@gmail.com" class="contact-link">
+                            <span class="material-icons-round">mail</span>Gmail
+                        </a>
+                        <a href="https://www.linkedin.com/in/harshvardhan-pujari-67b599281?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                            target="_blank" class="contact-link">
+                            <span class="material-icons-round">work</span>LinkedIn
+                        </a>
+                        <a href="https://github.com/Harshu092003" target="_blank" class="contact-link">
+                            <span class="material-icons-round">code</span>GitHub
+                        </a>
+                        <a href="tel:+917400418099" class="contact-link">
+                            <span class="material-icons-round">phone</span>+91 7400418099
+                        </a>
+                    </div>
+                    <a href="mailto:Harshvardhanpujari2003@gmail.com" class="btn-primary" style="margin-top:8px;">
+                        <span class="material-icons-round" style="font-size:18px">send</span>Send a Message
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Crafted with &#9829; by <span>Harshvardhan Pujari</span> &middot; 2025</p>
+        </footer>
+
+    </div>
+
+    <script>
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e, i) {
+                if (e.isIntersecting) {
+                    setTimeout(function () { e.target.classList.add('visible'); }, i * 80);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(function (el) { observer.observe(el); });
+
+        document.querySelectorAll('.glass').forEach(function (card) {
+            card.addEventListener('mousemove', function (e) {
+                var r = card.getBoundingClientRect();
+                var x = ((e.clientX - r.left) / r.width) * 100;
+                var y = ((e.clientY - r.top) / r.height) * 100;
+                card.style.background = 'radial-gradient(circle at ' + x + '% ' + y + '%, rgba(255,255,255,0.13), rgba(255,255,255,0.07) 60%)';
+            });
+            card.addEventListener('mouseleave', function () { card.style.background = ''; });
+        });
+
+        var sections = document.querySelectorAll('section[id]');
+        var navLinks = document.querySelectorAll('.nav-links a');
+        window.addEventListener('scroll', function () {
+            var scrollY = window.scrollY;
+            sections.forEach(function (sec) {
+                var top = sec.offsetTop - 80;
+                if (scrollY >= top && scrollY < top + sec.offsetHeight) {
+                    navLinks.forEach(function (a) { a.style.color = ''; });
+                    var active = document.querySelector('.nav-links a[href="#' + sec.id + '"]');
+                    if (active) active.style.color = '#f5f5f7';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
