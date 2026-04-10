@@ -4,8 +4,12 @@
 # for testing the streaming endpoint, you can use curl:
 # curl --no-buffer "http://localhost:8000/stream?question=Patient%20200"  %20 is used for spacing in the URL
 
+# # command to run via n8n docker run -it --rm \
+#   --network host \
+#   -v ~/.n8n:/home/node/.n8n \
+#   n8nio/n8n
 
-
+# and in browser http://localhost:5678/webhook-test/ask-rag?question=Patient%20200
 import asyncio
 from fastapi import FastAPI
 from pydantic import BaseModel
